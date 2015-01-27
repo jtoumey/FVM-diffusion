@@ -44,23 +44,4 @@ phi(n) = dp(n)
 do ii = n-1,1,-1
    phi(ii) = dp(ii)-cp(ii)*phi(ii+1)
 end do
-
-!~
-!~
-!~
-!~!
-!~do ii = 2,n
-!~   d(ii) = d(ii) - (b(ii)*a(ii-1))/d(ii-1)
-!~   c(ii) = c(ii) - (b(ii)*c(ii-1))/d(ii-1)
-!~end do
-!~201      format(3x,f12.5)
-!~write(6,201)d
-!~!
-!~!...Backward sweep
-!~!
-!~phi(n) = c(n)/d(n)
-!~!
-!~do ii = n-1,1,-1
-!~   phi(ii) = (c(ii) - a(ii)*phi(ii+1))/d(ii)
-!~end do
 END FUNCTION THOMAS

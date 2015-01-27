@@ -88,43 +88,18 @@ call thomas(n,a,b,c,d,T)
 !
 !...Write results
 !
-!~      write(6,101)
-!~101   format(5x,'____x(j)___',3x,'___phi(j)___')
-!~      open(unit=7,file='ps3_1.dat')
-      do jj = 1,n
-         write(6,201)x(jj),T(jj)
-!~         write(7,201)x(jj),T(jj)
+101   format(5x,'____x(j)___',3x,'___phi(j)___')
 201      format(3x,f12.5,3x,f12.5)
-      end do
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+write(6,101)
+open(unit=7,file='temp_distr.dat')
+write(6,201)0.,Ta
+write(7,201)0.,Ta
+do jj = 1,n
+   write(6,201)x(jj),T(jj)
+   write(7,201)x(jj),T(jj)
+end do
+write(6,201)xmax,Tb
+write(7,201)xmax,Tb
 
 END
 
