@@ -26,19 +26,41 @@ FUNCTION THOMAS(n,a,b,c,d,phi)
 integer n,ii
 real a(n),b(n),c(n),d(n)
 real phi(n)
+real cp(n),dp(n),m
 !
 !...Forward sweep
-!
+! initialize c-prime and d-prime
+cp(1) = c(1)/b(1)
+dp(1) = d(1)/b(1)
+! solve for vectors c-prime and d-prime
 do ii = 2,n
-   d(ii) = d(ii) - (b(ii)*a(ii-1))/d(ii-1)
-   c(ii) = c(ii) - (b(ii)*c(ii-1))/d(ii-1)
-end do
-!
-!...Backward sweep
-!
-phi(n) = c(n)/d(n)
-!
+   m = b(ii)-cp(ii-1)*a(ii)
+   cp(ii) = c(ii)/m
+   dp(ii) = (d(ii)-dp(ii-1)*a(ii))/m
+enddo
+! initialize x
+phi(n) = dp(n)
+! solve for x from the vectors c-prime and d-prime
 do ii = n-1,1,-1
-   phi(ii) = (c(ii) - a(ii)*phi(ii+1))/d(ii)
+   phi(ii) = dp(ii)-cp(ii)*phi(ii+1)
 end do
+
+!~
+!~
+!~
+!~!
+!~do ii = 2,n
+!~   d(ii) = d(ii) - (b(ii)*a(ii-1))/d(ii-1)
+!~   c(ii) = c(ii) - (b(ii)*c(ii-1))/d(ii-1)
+!~end do
+!~201      format(3x,f12.5)
+!~write(6,201)d
+!~!
+!~!...Backward sweep
+!~!
+!~phi(n) = c(n)/d(n)
+!~!
+!~do ii = n-1,1,-1
+!~   phi(ii) = (c(ii) - a(ii)*phi(ii+1))/d(ii)
+!~end do
 END FUNCTION THOMAS
