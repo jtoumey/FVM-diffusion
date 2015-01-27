@@ -22,13 +22,15 @@ IMPLICIT NONE
 !
 integer n,ii
 parameter (n = 5)
-real k,A,Ta,Tb
-real xmax,x(n)
+real k,area,Ta,Tb
+real xmax,x(n),dx
+real aw,ap,ae,Su,Sp
+real a(n),b(n),c(n),d(n)
 !
 !...thermal conductivity [W/m.K] and cross-sectional area [m^2]
 !
-k = 1000. 
-A = 0.01
+k    = 1000. 
+area = 0.01
 !
 !...boundary condition temperatures [*C]
 !
@@ -45,7 +47,52 @@ do ii = 1,n
 end do
 !
 !...set up system of equations
+!   Left Boundary:
 !
+aw =  0.
+ae =  k*area/dx
+Su =  2.*k*area*Ta/dx
+Sp = -2.*k*area/dx
+ap =  aw + ae - Sp
+!
+a(n) = -aw
+b(n) =  ap
+c(n) = -ae
+d(n) =  Su 
+!...Interior cells
+   aw = 
+   ae = 
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
