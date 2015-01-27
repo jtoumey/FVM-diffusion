@@ -23,9 +23,9 @@
 !*************************************************************************!
 FUNCTION THOMAS(n,a,b,c,d,phi)
 !
-integer, intent(in) n,ii
-real, intent(in)  a(n),b(n),c(n),d(n)
-real, intent(out) phi(n)
+integer n,ii
+real a(n),b(n),c(n),d(n)
+real phi(n)
 !
 !...Forward sweep
 !
