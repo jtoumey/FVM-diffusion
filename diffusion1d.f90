@@ -14,7 +14,6 @@
 !                Malalasekera, 2nd ed.                                    !
 !                                                                         !
 !*************************************************************************!
-
 PROGRAM DIFFUSION1D
 IMPLICIT NONE
 !
@@ -81,8 +80,10 @@ a(n) = -aw
 b(n) =  ap
 c(n) = -ae
 d(n) =  Su
-
-
+!
+!...Solve the system using the Thomas Algorithm 
+!
+call 
 
 
 
