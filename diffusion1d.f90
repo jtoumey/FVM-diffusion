@@ -62,6 +62,7 @@ do ii = 2,n-1
    aw = k*area/dx
    ae = k*area/dx
    Su = 0.
+   Sp = 0.
    ap = ae + aw - Sp
    !
    a(ii) = -aw
@@ -87,12 +88,12 @@ call thomas(n,a,b,c,d,T)
 !
 !...Write results
 !
-      write(6,101)
-101   format(5x,'____x(j)___',3x,'___phi(j)___')
-      open(unit=7,file='ps3_1.dat')
+!~      write(6,101)
+!~101   format(5x,'____x(j)___',3x,'___phi(j)___')
+!~      open(unit=7,file='ps3_1.dat')
       do jj = 1,n
          write(6,201)x(jj),T(jj)
-         write(7,201)x(jj),T(jj)
+!~         write(7,201)x(jj),T(jj)
 201      format(3x,f12.5,3x,f12.5)
       end do
 
