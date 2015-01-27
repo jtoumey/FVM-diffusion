@@ -16,14 +16,37 @@
 !*************************************************************************!
 
 PROGRAM DIFFUSION1D
-
+IMPLICIT NONE
+!
+!...number of nodes/CVs is `n'
+!
+integer n,ii
 parameter (n = 5)
-double precision k,A
-
-
+real k,A,Ta,Tb
+real xmax,x(n)
+!
+!...thermal conductivity [W/m.K] and cross-sectional area [m^2]
+!
 k = 1000. 
-A 
- 
+A = 0.01
+!
+!...boundary condition temperatures [*C]
+!
+Ta = 100.
+Tb = 500.  
+!
+!...set up the grid
+!   xmax = domain length
+!
+xmax = 0.5
+dx = xmax/float(n)
+do ii = 1,n
+  x(ii) = (ii-0.5)*dx
+end do
+!
+!...set up system of equations
+!
+
 
 
 
