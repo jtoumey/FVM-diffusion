@@ -21,7 +21,7 @@ IMPLICIT NONE
 !
 integer n,ii,jj
 parameter (n = 5)
-real k,area,Ta,Tb
+real k,area,Ta,Tb,T(n)
 real xmax,x(n),dx
 real aw,ap,ae,Su,Sp
 real a(n),b(n),c(n),d(n)
@@ -83,7 +83,10 @@ d(n) =  Su
 !
 !...Solve the system using the Thomas Algorithm 
 !
-call 
+call thomas(n,a,b,c,d,T)
+!
+!...Write results
+!
 
 
 

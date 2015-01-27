@@ -14,10 +14,31 @@
 !                function comes from Versteeg and Malalasekera, 2nd ed.,  !
 !                Section 7.2                                              !
 !                                                                         !
+!                  a     Sub diagonal                                     !
+!                  b     Main diagonal                                    !
+!                  c     Super diagonal                                   !
+!                  d     Right side of Linear System                      !
+!                  phi   Solution vector                                  !
+!                                                                         !
 !*************************************************************************!
-FUNCTION THOMAS
-
-
-
-
-END
+FUNCTION THOMAS(n,a,b,c,d,phi)
+!
+integer, intent(in) n,ii
+real, intent(in)  a(n),b(n),c(n),d(n)
+real, intent(out) phi(n)
+!
+!...Forward sweep
+!
+do ii = 2,n
+   d(ii) = d(ii) - (b(ii)*a(ii-1))/d(ii-1)
+   c(ii) = c(ii) - (b(ii)*c(ii-1))/d(ii-1)
+end do
+!
+!...Backward sweep
+!
+phi(n) = c(n)/d(n)
+!
+do ii = n-1,1,-1
+   phi(ii) = (c(ii) - a(ii)*phi(ii+1))/d(ii)
+end do
+END FUNCTION THOMAS
