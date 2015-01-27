@@ -10,7 +10,7 @@
 !  Language:     FORTRAN90                                                !
 !                                                                         !
 !  Description:  This code solves source-free heat conduction in a 1-D    !
-!                bar. The method follows example 4.3 in Versteeg and      !
+!                bar. The method follows example 4.1 in Versteeg and      !
 !                Malalasekera, 2nd ed.                                    !
 !                                                                         !
 !*************************************************************************!
