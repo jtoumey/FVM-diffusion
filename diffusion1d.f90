@@ -20,7 +20,7 @@ IMPLICIT NONE
 !
 !...number of nodes/CVs is `n'
 !
-integer n,ii
+integer n,ii,jj
 parameter (n = 5)
 real k,area,Ta,Tb
 real xmax,x(n),dx
@@ -42,28 +42,45 @@ Tb = 500.
 !
 xmax = 0.5
 dx = xmax/float(n)
-do ii = 1,n
-  x(ii) = (ii-0.5)*dx
+do jj = 1,n
+  x(jj) = (jj-0.5)*dx
 end do
 !
 !...set up system of equations
 !   Left Boundary:
-!
 aw =  0.
 ae =  k*area/dx
 Su =  2.*k*area*Ta/dx
 Sp = -2.*k*area/dx
 ap =  aw + ae - Sp
 !
+a(1) = -aw
+b(1) =  ap
+c(1) = -ae
+d(1) =  Su 
+!...Interior cells
+do ii = 2,n-1
+   aw = k*area/dx
+   ae = k*area/dx
+   Su = 0.
+   ap = ae + aw - Sp
+   !
+   a(ii) = -aw
+   b(ii) =  ap
+   c(ii) = -ae
+   d(ii) =  Su
+end do
+!...Right Boundary
+aw =  k*area/dx
+ae =  0.
+Su =  2.*k*area*Tb/dx
+Sp = -2.*k*area/dx
+ap =  aw + ae - Sp
+!
 a(n) = -aw
 b(n) =  ap
 c(n) = -ae
-d(n) =  Su 
-!...Interior cells
-   aw = 
-   ae = 
-   
-
+d(n) =  Su
 
 
 
