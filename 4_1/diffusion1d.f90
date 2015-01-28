@@ -88,7 +88,7 @@ call thomas(n,a,b,c,d,T)
 !
 !...Write results
 !
-101   format(5x,'____x(j)___',3x,'___phi(j)___')
+101   format(5x,'____x(j)___',3x,'____T(j)____')
 201      format(3x,f12.5,3x,f12.5)
 write(6,101)
 open(unit=7,file='temp_distr.dat')

@@ -27,7 +27,7 @@ real a(n),b(n),c(n),d(n)
 !...thermal conductivity [W/m.K] and uniform heat generation [kW/m^3]
 !   area [m^2]
 !
-k    = 0.05
+k    = 0.5
 q    = 1000000.
 area = 1.
 !
@@ -41,7 +41,6 @@ Tb = 200.
 !
 xmax = 0.02
 dx = xmax/float(n)
-!write(6,201)dx
 do jj = 1,n
   x(jj) = (jj-0.5)*dx
 end do
@@ -49,8 +48,8 @@ end do
 !...set up system of equations
 !   Left Boundary:
 !
-aw = 0.
-ae = k*area/dx
+aw =  0.
+ae =  k*area/dx
 Su =  2.*k*area*Ta/dx + q*area*dx
 Sp = -2.*k*area/dx
 ap =  ae + aw - Sp
@@ -61,20 +60,20 @@ c(1) = -ae
 d(1) =  Su
 !...Interior cells:
 do ii = 2,n-1
-   aw = 0.
+   aw = k*area/dx
    ae = k*area/dx
-   Su =  2.*k*area*Ta/dx + q*area*dx
-   Sp = -2.*k*area/dx
-   ap =  ae + aw - Sp
+   Su = q*area*dx
+   Sp = 0.0
+   ap = ae + aw - Sp
    !
-   a(1) = -aw
-   b(1) =  ap
-   c(1) = -ae
-   d(1) =  Su
+   a(ii) = -aw
+   b(ii) =  ap
+   c(ii) = -ae
+   d(ii) =  Su
 end do 
 !...Right Boundary:
-aw = k*area/dx
-ae = 0.
+aw =  k*area/dx
+ae =  0.
 Su =  2.*k*area*Tb/dx + q*area*dx
 Sp = -2.*k*area/dx
 ap =  ae + aw - Sp
@@ -83,30 +82,26 @@ a(n) = -aw
 b(n) =  ap
 c(n) = -ae
 d(n) =  Su
+!
+!...Solve the system using the Thomas Algorithm 
+!
+call thomas(n,a,b,c,d,T)
+!
+!...Write results
+!
+101   format(5x,'____x(j)___',3x,'____T(j)__')
+201      format(2x,f12.5,2x,f12.5)
+write(6,101)
+open(unit=7,file='temp_distr.dat')
+write(6,201)0.,Ta
+write(7,201)0.,Ta
+do jj = 1,n
+   write(6,201)x(jj),T(jj)
+   write(7,201)x(jj),T(jj)
+end do
+write(6,201)xmax,Tb
+write(7,201)xmax,Tb
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-201      format(3x,f12.5)!,3x,f12.5)
 
 END
