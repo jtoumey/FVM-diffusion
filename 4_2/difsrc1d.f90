@@ -41,10 +41,70 @@ Tb = 200.
 !
 xmax = 0.02
 dx = xmax/float(n)
+!write(6,201)dx
 do jj = 1,n
   x(jj) = (jj-0.5)*dx
 end do
-write(6,201)
+!
+!...set up system of equations
+!   Left Boundary:
+!
+aw = 0.
+ae = k*area/dx
+Su =  2.*k*area*Ta/dx + q*area*dx
+Sp = -2.*k*area/dx
+ap =  ae + aw - Sp
+!
+a(1) = -aw
+b(1) =  ap
+c(1) = -ae
+d(1) =  Su
+!...Interior cells:
+do ii = 2,n-1
+   aw = 0.
+   ae = k*area/dx
+   Su =  2.*k*area*Ta/dx + q*area*dx
+   Sp = -2.*k*area/dx
+   ap =  ae + aw - Sp
+   !
+   a(1) = -aw
+   b(1) =  ap
+   c(1) = -ae
+   d(1) =  Su
+end do 
+!...Right Boundary:
+aw = k*area/dx
+ae = 0.
+Su =  2.*k*area*Tb/dx + q*area*dx
+Sp = -2.*k*area/dx
+ap =  ae + aw - Sp
+!
+a(n) = -aw
+b(n) =  ap
+c(n) = -ae
+d(n) =  Su
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 201      format(3x,f12.5)!,3x,f12.5)
