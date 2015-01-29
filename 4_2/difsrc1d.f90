@@ -51,35 +51,37 @@ end do
 !
 !...set up system of equations
 !
-!   Left side
+!   Left side:
+!   Dirichlet: [alphaA betaA gammaA] = [1 0 Ta]
+!   Neumann  : [alphaA betaA gammaA] = [0 1 0 ] 
+!   Robin    : 
 alphaA = 1.
 betaA  = 0.
 gammaA = Ta
 !...Right side
-alphaB = 
-betaB  =
-gammaB = 
+alphaB = 0.0
+betaB  = 1.0
+gammaB = 0.0 
 !
 !...Left boundary 
 a(1) = 0.
 b(1) = alphaA - 2.*betaA/dx
-c(1) = 
-d(1) =
-
-
+c(1) = 2.*betaA/dx
+d(1) = gammaA
 !...Left Cell
-aw =  0.
+aw =  0.0 ! technically the west cell is outside of the domain bndry
+aa =  2.*k*area/dx
 ae =  k*area/dx
-Su =  2.*k*area*Ta/dx + q*area*dx
+Su =  q*area*dx
 Sp = -2.*k*area/dx
 ap =  ae + aw - Sp
 !
-a(1) = -aw
-b(1) =  ap
-c(1) = -ae
-d(1) =  Su
+a(2) = -aa
+b(2) =  ap
+c(2) = -ae
+d(2) =  Su
 !...Interior cells:
-do ii = 2,n-1
+do ii = 3,n-2
    aw = k*area/dx
    ae = k*area/dx
    Su = q*area*dx
