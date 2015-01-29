@@ -26,6 +26,7 @@ real k,q,area,Ta,Tb,T(n)
 real xmax,x(n),dx
 real aw,ap,ae,Su,Sp,aa
 real a(n),b(n),c(n),d(n)
+real alphaA,betaA,gammaA,alphaB,betaB,gammaB
 !
 !...thermal conductivity [W/m.K] and uniform heat generation [kW/m^3]
 !   area [m^2]
@@ -49,14 +50,23 @@ do jj = 2,n-1
 end do
 !
 !...set up system of equations
-!   Left Boundary:
 !
-aw = 0.
-aa = 
-ae = 
-Su = 
-Sp =
-ap =
+!   Left side
+alphaA = 1.
+betaA  = 0.
+gammaA = Ta
+!...Right side
+alphaB = 
+betaB  =
+gammaB = 
+!
+!...Left boundary 
+a(1) = 0.
+b(1) = alphaA - 2.*betaA/dx
+c(1) = 
+d(1) =
+
+
 !...Left Cell
 aw =  0.
 ae =  k*area/dx
