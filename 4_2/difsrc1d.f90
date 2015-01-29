@@ -53,15 +53,15 @@ end do
 !
 !   Left side:
 !   Dirichlet: [alphaA betaA gammaA] = [1 0 Ta]
-!   Neumann  : [alphaA betaA gammaA] = [0 1 0 ] 
+!   Neumann  : [alphaA betaA gammaA] = [0 1 q ] 
 !   Robin    : 
 alphaA = 1.
 betaA  = 0.
 gammaA = Ta
 !...Right side
-alphaB = 0.0
-betaB  = 1.0
-gammaB = 0.0 
+alphaB = 1.
+betaB  = 0.
+gammaB = Tb 
 !
 !...Left boundary 
 a(1) = 0.
@@ -69,12 +69,12 @@ b(1) = alphaA - 2.*betaA/dx
 c(1) = 2.*betaA/dx
 d(1) = gammaA
 !...Left Cell
-aw =  0.0 ! technically the west cell is outside of the domain bndry
-aa =  2.*k*area/dx
-ae =  k*area/dx
-Su =  q*area*dx
-Sp = -2.*k*area/dx
-ap =  ae + aw - Sp
+aw = 0.0 ! technically the west cell is outside of the domain bndry
+aa = 2.*k*area/dx
+ae = k*area/dx
+Su = q*area*dx
+Sp = 0.0
+ap = ae + aw - Sp
 !
 a(2) = -aa
 b(2) =  ap
@@ -94,23 +94,23 @@ do ii = 3,n-2
    d(ii) =  Su
 end do 
 !...Right cell
-aw =  k*area/dx
-ae =  0.
-ab =  2.*k*area/dx
-Su =  q*area*dx
-Sp = -2.*k*area/dx
-ap =  ae + aw - Sp
+aw = k*area/dx
+ae = 0.
+ab = 2.*k*area/dx
+Su = q*area*dx
+Sp = 0
+ap = ae + aw - Sp
 !
-a(n) = -aw
-b(n) =  ap
-c(n) = -ae
-d(n) =  Su
+a(n-1) = -aw
+b(n-1) =  ap
+c(n-1) = -ab
+d(n-1) =  Su
 !
 !...Right Boundary
-a(1) = 2.*betaB/dx
-b(1) = alphaB + 2.*betaB/dx
-c(1) = 0.
-d(1) = gammaA
+a(n) = 2.*betaB/dx
+b(n) = alphaB + 2.*betaB/dx
+c(n) = 0.
+d(n) = gammaB
 !
 !...Solve the system using the Thomas Algorithm 
 !
