@@ -13,15 +13,18 @@
 !                constant source. The method follows example 4.2 in       !
 !                Versteeg and Malalasekera, 2nd ed.                       !
 !                                                                         !
+!                ** Modified to include different B.C. formulation **     !
+!                ** from Dr. Blaisdell's AAE412 class notes        **     !
+!                                                                         !
 !*************************************************************************!
 PROGRAM DIFSRC1D
 IMPLICIT NONE
-
+!...n-2 is the number of cells -- added two extra to account for B.C.
 integer n,ii,jj
-parameter (n = 5)
+parameter (n = 7)
 real k,q,area,Ta,Tb,T(n)
 real xmax,x(n),dx
-real aw,ap,ae,Su,Sp
+real aw,ap,ae,Su,Sp,aa
 real a(n),b(n),c(n),d(n)
 !
 !...thermal conductivity [W/m.K] and uniform heat generation [kW/m^3]
@@ -40,14 +43,21 @@ Tb = 200.
 !   xmax is the domain length [m]
 !
 xmax = 0.02
-dx = xmax/float(n)
-do jj = 1,n
-  x(jj) = (jj-0.5)*dx
+dx = xmax/float(n-2)
+do jj = 2,n-1
+  x(jj) = (jj-1-0.5)*dx
 end do
 !
 !...set up system of equations
 !   Left Boundary:
 !
+aw = 0.
+aa = 
+ae = 
+Su = 
+Sp =
+ap =
+!...Left Cell
 aw =  0.
 ae =  k*area/dx
 Su =  2.*k*area*Ta/dx + q*area*dx
