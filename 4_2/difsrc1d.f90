@@ -24,7 +24,7 @@ integer n,ii,jj
 parameter (n = 7)
 real k,q,area,Ta,Tb,T(n)
 real xmax,x(n),dx
-real aw,ap,ae,Su,Sp,aa
+real aw,ap,ae,Su,Sp,aa,ab
 real a(n),b(n),c(n),d(n)
 real alphaA,betaA,gammaA,alphaB,betaB,gammaB
 !
@@ -93,10 +93,11 @@ do ii = 3,n-2
    c(ii) = -ae
    d(ii) =  Su
 end do 
-!...Right Boundary:
+!...Right cell
 aw =  k*area/dx
 ae =  0.
-Su =  2.*k*area*Tb/dx + q*area*dx
+ab =  2.*k*area/dx
+Su =  q*area*dx
 Sp = -2.*k*area/dx
 ap =  ae + aw - Sp
 !
@@ -104,6 +105,12 @@ a(n) = -aw
 b(n) =  ap
 c(n) = -ae
 d(n) =  Su
+!
+!...Right Boundary
+a(1) = 2.*betaB/dx
+b(1) = alphaB + 2.*betaB/dx
+c(1) = 0.
+d(1) = gammaA
 !
 !...Solve the system using the Thomas Algorithm 
 !
