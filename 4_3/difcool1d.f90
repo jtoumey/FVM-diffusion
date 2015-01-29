@@ -23,16 +23,15 @@ integer n,ii,jj
 parameter (n = 5)
 real n2,Ta,Tinf,T(n)
 real xmax,x(n),dx
-
-
 real aw,ap,ae,Su,Sp
 real a(n),b(n),c(n),d(n)
 !
 !...n^2 = hP/kA [1/m^2]
 !
-n2 = 1./25.
+n2 = 25.
 !
 !...boundary temperature: fixed at left [*C]
+!   freestream temp [*C]
 !
 Ta = 100.
 !
@@ -48,5 +47,29 @@ end do
 !...set up system of equations
 !   Left Boundary:
 !
+aw =  0.
+ae =  1./dx
+Su =  2.*dx*Ta + n2*Tinf*dx
+Sp = -n2*dx - 2./dx
+ap = aw + ae - Sp 
+!
+a(1) = -aw
+b(1) =  ap
+c(1) =  ae
+d(1) =  Su
+!...Interior cells
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 END
