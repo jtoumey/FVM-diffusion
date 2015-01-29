@@ -55,9 +55,47 @@ ap = aw + ae - Sp
 !
 a(1) = -aw
 b(1) =  ap
-c(1) =  ae
+c(1) = -ae
 d(1) =  Su
 !...Interior cells
+do ii = 2,n-1
+   aw =  1./dx
+   ae =  1./dx
+   Su =  n2*Tinf*dx
+   Sp = -n2*dx
+   ap = aw + ae - Sp 
+   !
+   a(ii) = -aw
+   b(ii) =  ap
+   c(ii) = -ae
+   d(ii) =  Su
+end do
+!....Right boundary
+aw =  1./dx
+ae =  0.
+Su =  n2*Tinf*dx
+Sp = -n2*dx
+ap = aw + ae - Sp 
+!
+a(n) = -aw
+b(n) =  ap
+c(n) = -ae
+d(n) =  Su
+!
+!...Solve the system using the Thomas Algorithm 
+!
+call thomas(n,a,b,c,d,T)
+!
+!...Write results
+!
+
+
+
+
+
+
+
+
 
 
 
