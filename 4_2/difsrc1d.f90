@@ -45,9 +45,11 @@ Tb = 200.
 !
 xmax = 0.02
 dx = xmax/float(n-2)
+x(1) = 0.0
 do jj = 2,n-1
   x(jj) = (jj-1-0.5)*dx
 end do
+x(n) = xmax
 !
 !...set up system of equations
 !
@@ -59,9 +61,9 @@ alphaA = 1.
 betaA  = 0.
 gammaA = Ta
 !...Right side
-alphaB = 1.
-betaB  = 0.
-gammaB = Tb 
+alphaB = 0.
+betaB  = -1.
+gammaB = Ta 
 !
 !...Left boundary 
 a(1) = 0.
@@ -99,7 +101,7 @@ ae = 0.
 ab = 2.*k*area/dx
 Su = q*area*dx
 Sp = 0
-ap = ae + ab - Sp
+ap = aw + ab - Sp
 !
 a(n-1) = -aw
 b(n-1) =  ap
@@ -123,19 +125,12 @@ call thomas(n,a,b,c,d,T)
 !
 !...Write results
 !
-101   format(5x,'____x(j)___',3x,'____T(j)__')
-201      format(2x,f12.5,2x,f12.5)
+101 format(5x,'____x(j)___',3x,'____T(j)__')
+201 format(2x,f12.5,2x,f12.5)
 write(6,101)
 open(unit=7,file='temp_distr.dat')
-write(6,201)0.,Ta
-write(7,201)0.,Ta
 do jj = 1,n
    write(6,201)x(jj),T(jj)
    write(7,201)x(jj),T(jj)
 end do
-write(6,201)xmax,Tb
-write(7,201)xmax,Tb
-
-
-
 END
