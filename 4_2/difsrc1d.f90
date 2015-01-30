@@ -62,8 +62,8 @@ betaA  = 0.
 gammaA = Ta
 !...Right side
 alphaB = 0.
-betaB  = -1.
-gammaB = Ta 
+betaB  = 1.
+gammaB = 0 
 !
 !...Left boundary 
 a(1) = 0.
@@ -109,7 +109,7 @@ c(n-1) = -ab
 d(n-1) =  Su
 !
 !...Right Boundary
-a(n) = 2.*betaB/dx
+a(n) = -2.*betaB/dx
 b(n) = alphaB + 2.*betaB/dx
 c(n) = 0.
 d(n) = gammaB
