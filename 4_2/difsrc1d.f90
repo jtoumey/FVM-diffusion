@@ -74,7 +74,7 @@ aa = 2.*k*area/dx
 ae = k*area/dx
 Su = q*area*dx
 Sp = 0.0
-ap = ae + aw - Sp
+ap = ae + aa - Sp
 !
 a(2) = -aa
 b(2) =  ap
@@ -99,7 +99,7 @@ ae = 0.
 ab = 2.*k*area/dx
 Su = q*area*dx
 Sp = 0
-ap = ae + aw - Sp
+ap = ae + ab - Sp
 !
 a(n-1) = -aw
 b(n-1) =  ap
@@ -111,6 +111,11 @@ a(n) = 2.*betaB/dx
 b(n) = alphaB + 2.*betaB/dx
 c(n) = 0.
 d(n) = gammaB
+
+301 format(2x,f12.5,2x,f12.5,2x,f12.5,2x,f12.5)
+do jj = 1,n
+   write(6,301)a(jj),b(jj),c(jj),d(jj)
+end do 
 !
 !...Solve the system using the Thomas Algorithm 
 !
