@@ -52,11 +52,11 @@ end do
 x(n) = xmax
 !
 !...set up system of equations
-!
-!   Left side:
-!   Dirichlet: [alphaA betaA gammaA] = [1 0 Ta]
-!   Neumann  : [alphaA betaA gammaA] = [0 1 q ] 
-!   Robin    : 
+!                                  [alphaA betaA gammaA]
+!   Dirichlet: T_A = const         [1 0 Ta]
+!   Neumann  : (dT/dx)_A = -q      [0 1 q ] 
+!   Robin    : hT_A-k(dT/dx) = hT  [h k hT]
+!...Left side: 
 alphaA = 1.
 betaA  = 0.
 gammaA = Ta
