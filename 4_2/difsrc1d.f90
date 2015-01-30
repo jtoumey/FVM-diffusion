@@ -71,7 +71,7 @@ b(1) = alphaA - 2.*betaA/dx
 c(1) = 2.*betaA/dx
 d(1) = gammaA
 !...Left Cell
-aw = 0.0 ! technically the west cell is outside of the domain bndry
+aw = 0.0 
 aa = 2.*k*area/dx
 ae = k*area/dx
 Su = q*area*dx
@@ -113,11 +113,6 @@ a(n) = -2.*betaB/dx
 b(n) = alphaB + 2.*betaB/dx
 c(n) = 0.
 d(n) = gammaB
-
-301 format(2x,f12.5,2x,f12.5,2x,f12.5,2x,f12.5)
-do jj = 1,n
-   write(6,301)a(jj),b(jj),c(jj),d(jj)
-end do 
 !
 !...Solve the system using the Thomas Algorithm 
 !
