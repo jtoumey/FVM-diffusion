@@ -24,11 +24,13 @@ IMPLICIT NONE
 integer IL,JL,ii,jj,kk
 parameter (IL=6,JL=6)
 real dx,dy,xmax,ymax,x(IL),y(JL)
+
+
 real, dimension(IL,JL) :: T
 !
 !...set up the grid
 !
-xmax = 1.
+xmax = 0.3
 dx = xmax/float(IL-2)
 x(1) = 0.
 do ii = 2,IL-1
@@ -36,7 +38,7 @@ do ii = 2,IL-1
 end do
 x(IL) = xmax
 !
-ymax = 1.
+ymax = 0.4
 dy = ymax/float(JL-2)
 y(1) = 0
 do jj = 2,JL-1
@@ -46,6 +48,12 @@ y(JL) = ymax
 !
 !...Set up system 
 !
+
+
+
+
+
+
 101 format(3x,f12.5,3x,f12.5)
 
 do kk = 1,IL 
