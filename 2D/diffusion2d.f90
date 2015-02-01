@@ -1,34 +1,32 @@
-!*************************************************************************!
-!                                                                         !
-!  Module:       DIFFUSION2D.F90                                          !
-!                                                                         !
-!  Programmer:   Julian M. Toumey                                         !
-!                Madison, WI                                              !
-!                                                                         !
-!  Date:         January 2015                                             !
-!                                                                         !
-!  Language:     FORTRAN90                                                !
-!                                                                         !
-!  Description:  This code solves heat conduction in a 2-D plate. with a  !
-!                constant source. The method follows example 4.2 in       !
-!                Versteeg and Malalasekera, 2nd ed.                       !
-!                                                                         !
-!*************************************************************************!
+!**************************************************************************!
+!                                                                          !
+!  Module:       DIFFUSION2D.F90                                           !
+!                                                                          !
+!  Programmer:   Julian M. Toumey                                          !
+!                Madison, WI                                               !
+!                                                                          !
+!  Date:         January 2015                                              !
+!                                                                          !
+!  Language:     FORTRAN90                                                 !
+!                                                                          !
+!  Description:  This code solves source-free heat conduction in a 2-D     !
+!                plate. The method follows example 7.2 in Versteeg and     !
+!                Malalasekera, 2nd ed. The code assumes temporarily        !
+!                constant T_E and T_W values and solves along N-S lines    !
+!                using the Thomas algorithm.                               !
+!                                                                          !
+!**************************************************************************!
 PROGRAM DIFFUSION2D
 IMPLICIT NONE
-! n = number of CVs + 2 (addt'l index on each side for the node on the boundary. This way, we can add an 
-! additional equation for the Temperature at each boundary and modify some coefficients in order to 
-! quickly specify any type of BC without re-formulating the whole problem and re-coding the B.C. 
-! implementation)
-
+!
 integer IL,JL,ii,jj,kk,iter
 parameter (IL=3,JL=4)
 real dx,dy,xmax,ymax,x(IL),y(JL)
 real aw,ae,as,an,Su,Sp,ap
 real qw,k,area,Tn
 real a(JL),b(JL),c(JL),d(JL)
-real Tsol(JL),Tprev,resid
-real, dimension(JL,IL) :: T
+real Tsol(JL),resid
+real, dimension(JL,IL) :: T,Tprev
 !
 !...Initial temperature distribution: 0 [*C] everywhere
 !
@@ -57,8 +55,8 @@ k  = 1000.
 Tn = 100.
 area = 0.001
 
-do while (resid >= 1.)
-   Tprev = maxval(T)
+do while (resid >= .01)
+   Tprev = T
    !
    !...West Cells
    !
@@ -71,7 +69,6 @@ do while (resid >= 1.)
    Sp = 0.
    Su = area*qw
    ap = aw + ae + as + an - Sp
-   !write(6,301)an,as,aw,ae,ap,Su
    !
    a(1) = -as
    b(1) =  ap
@@ -87,8 +84,6 @@ do while (resid >= 1.)
       Su = area*qw
       ap = aw + ae + as + an - Sp
       !
-      !write(6,301)an,as,aw,ae,ap,Su
-      !
       a(jj) = -as
       b(jj) =  ap
       c(jj) = -an
@@ -102,8 +97,6 @@ do while (resid >= 1.)
    Sp = -2.*k*area/dx
    Su = area*qw + 2.*k*area*Tn/dx
    ap = aw + ae + as + an - Sp
-
-   !write(6,301)an,as,aw,ae,ap,Su
    !
    a(JL) = -as
    b(JL) =  ap
@@ -132,7 +125,6 @@ do ii = 2,IL-1
    Sp = 0
    Su = 0
    ap = aw + ae + as + an - Sp
-   !write(6,301)an,as,aw,ae,ap,Su
    !
    a(1) = -as
    b(1) =  ap
@@ -148,8 +140,6 @@ do ii = 2,IL-1
       Su = 0.
       ap = aw + ae + as + an - Sp
       !
-      !write(6,301)an,as,aw,ae,ap,Su
-      !
       a(jj) = -as
       b(jj) =  ap
       c(jj) = -an
@@ -163,7 +153,6 @@ do ii = 2,IL-1
    Sp = -2.*k*area/dx
    Su =  2.*k*area*Tn/dx
    ap = aw + ae + as + an - Sp
-   !write(6,301)an,as,aw,ae,ap,Su
    !
    a(JL) = -as
    b(JL) =  ap
@@ -190,7 +179,6 @@ end do
    Sp = 0.
    Su = 0.
    ap = aw + ae + as + an - Sp
-   !write(6,301)an,as,aw,ae,ap,Su
    !
    a(1) = -as
    b(1) =  ap
@@ -206,8 +194,6 @@ end do
       Su = 0.
       ap = aw + ae + as + an - Sp
       !
-      !write(6,301)an,as,aw,ae,ap,Su
-      !
       a(jj) = -as
       b(jj) =  ap
       c(jj) = -an
@@ -221,8 +207,6 @@ end do
    Sp = -2.*k*area/dx
    Su = 2.*k*area*Tn/dx
    ap = aw + ae + as + an - Sp
-
-   !write(6,301)an,as,aw,ae,ap,Su
    !
    a(JL) = -as
    b(JL) =  ap
@@ -236,26 +220,19 @@ end do
    T(:,IL) = Tsol
 
 
-   resid = maxval(T) - Tprev
+   resid = maxval(abs(T - Tprev))
    write(6,*)
-   write(6,401)
-   write(6,*)
+   write(6,401)iter
+   iter = iter + 1
    
 end do
 
 write(6,201)T
+open(unit=7,file='plate_temp.dat',ACTION="write", STATUS="replace")
+do jj = JL,1,-1
+   write(7,'(1000f12.5)') (T(jj,ii),ii=1,IL)
+end do
 
-
-
-
-101 format(3x,f12.5,3x,f12.5)
 201 format(3x,f12.5)
-301 format(2x,f12.5,2x,f12.5,2x,f12.5,2x,f12.5,2x,f12.5,2x,f12.5)
-401 format(3x,'*** Iteration ***')
-501 format(2x,f12.5,2x,f12.5,2x,f12.5,2x,f12.5)
-!do kk = 1,IL 
-!   (6,101)x(kk),y(kk)
-!end do
-
-
+401 format(3x,'*** Iteration :',i4,'  ***')
 END
