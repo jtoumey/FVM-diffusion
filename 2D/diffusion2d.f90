@@ -28,7 +28,7 @@ real aw,ae,as,an,Su,Sp,ap
 real qw,k,area,Tn
 real a(JL),b(JL),c(JL),d(JL)
 real Tsol(JL)
-real, dimension(JL,2) :: T
+real, dimension(JL,IL) :: T
 !
 !...Initial temperature distribution: 0 [*C] everywhere
 !
@@ -64,7 +64,7 @@ an = k*area/dx
 Sp = 0
 Su = area*qw
 ap = aw + ae + as + an - Sp
-write(6,301)an,as,aw,ae,ap,Su
+!write(6,301)an,as,aw,ae,ap,Su
 !
 a(1) = -as
 b(1) =  ap
@@ -80,7 +80,7 @@ do jj = 2,JL-1
    Su = area*qw
    ap = aw + ae + as + an - Sp
    !
-   write(6,301)an,as,aw,ae,ap,Su
+   !write(6,301)an,as,aw,ae,ap,Su
    !
    a(jj) = -as
    b(jj) =  ap
@@ -96,7 +96,7 @@ Sp = -2.*k*area/dx
 Su = area*qw + 2.*k*area*Tn/dx
 ap = aw + ae + as + an - Sp
 
-write(6,301)an,as,aw,ae,ap,Su
+!write(6,301)an,as,aw,ae,ap,Su
 !
 a(JL) = -as
 b(JL) =  ap
@@ -107,9 +107,11 @@ d(JL) =  Su + ae*T(JL,2)
 !
 call thomas(JL,a,b,c,d,Tsol)
 
-do jj = 1,JL
-   write(6,201)Tsol(jj)
-end do
+
+
+
+T(:,1) = Tsol
+write(6,201)T
 
 101 format(3x,f12.5,3x,f12.5)
 201 format(3x,f12.5)
