@@ -21,18 +21,20 @@ IMPLICIT NONE
 ! quickly specify any type of BC without re-formulating the whole problem and re-coding the B.C. 
 ! implementation)
 
-integer IL,JL,ii,jj,kk
+integer IL,JL,ii,jj,kk,iter
 parameter (IL=3,JL=4)
 real dx,dy,xmax,ymax,x(IL),y(JL)
 real aw,ae,as,an,Su,Sp,ap
 real qw,k,area,Tn
 real a(JL),b(JL),c(JL),d(JL)
-real Tsol(JL)
+real Tsol(JL),Tprev,resid
 real, dimension(JL,IL) :: T
 !
 !...Initial temperature distribution: 0 [*C] everywhere
 !
 T = 0.
+resid = 1000.
+iter = 1
 !
 !...set up the grid
 !
@@ -54,6 +56,9 @@ qw = 500000.
 k  = 1000.
 Tn = 100.
 area = 0.001
+
+do while (resid >= 1.)
+   Tprev = maxval(T)
    !
    !...West Cells
    !
@@ -63,7 +68,7 @@ area = 0.001
    ae = k*area/dx
    as = 0.
    an = k*area/dx
-   Sp = 0
+   Sp = 0.
    Su = area*qw
    ap = aw + ae + as + an - Sp
    !write(6,301)an,as,aw,ae,ap,Su
@@ -102,8 +107,9 @@ area = 0.001
    !
    a(JL) = -as
    b(JL) =  ap
-   c(JL) = -an
+   c(JL) = an
    d(JL) =  Su + ae*T(JL,2)
+
    !
    !...solve system with the TDMA
    !
@@ -172,10 +178,72 @@ do ii = 2,IL-1
 
 end do
 
-   write(6,201)T
+   !
+   !...East Cells
+   !
+   !...Set up system 
+   !   SE Corner
+   aw = k*area/dx
+   ae = 0.
+   as = 0.
+   an = k*area/dx
+   Sp = 0.
+   Su = 0.
+   ap = aw + ae + as + an - Sp
+   !write(6,301)an,as,aw,ae,ap,Su
+   !
+   a(1) = -as
+   b(1) =  ap
+   c(1) = -an
+   d(1) =  Su + aw*T(1,IL-1)
+   !
+   do jj = 2,JL-1
+      aw = k*area/dx
+      ae = 0.
+      as = k*area/dx
+      an = k*area/dx
+      Sp = 0.
+      Su = 0.
+      ap = aw + ae + as + an - Sp
+      !
+      !write(6,301)an,as,aw,ae,ap,Su
+      !
+      a(jj) = -as
+      b(jj) =  ap
+      c(jj) = -an
+      d(jj) =  Su + aw*T(jj,IL-1)
+   end do
+   !...NE corner
+   aw = k*area/dx
+   ae = 0.
+   as = k*area/dx
+   an = 0.
+   Sp = -2.*k*area/dx
+   Su = 2.*k*area*Tn/dx
+   ap = aw + ae + as + an - Sp
+
+   !write(6,301)an,as,aw,ae,ap,Su
+   !
+   a(JL) = -as
+   b(JL) =  ap
+   c(JL) = -an
+   d(JL) =  Su + aw*T(JL,IL-1)
+   !
+   !...solve system with the TDMA
+   !
+   call thomas(JL,a,b,c,d,Tsol)
+   !...Store temperature solution
+   T(:,IL) = Tsol
+
+
+   resid = maxval(T) - Tprev
+   write(6,*)
+   write(6,401)
+   write(6,*)
    
+end do
 
-
+write(6,201)T
 
 
 
@@ -183,8 +251,10 @@ end do
 101 format(3x,f12.5,3x,f12.5)
 201 format(3x,f12.5)
 301 format(2x,f12.5,2x,f12.5,2x,f12.5,2x,f12.5,2x,f12.5,2x,f12.5)
+401 format(3x,'*** Iteration ***')
+501 format(2x,f12.5,2x,f12.5,2x,f12.5,2x,f12.5)
 !do kk = 1,IL 
-!   write(6,101)x(kk),y(kk)
+!   (6,101)x(kk),y(kk)
 !end do
 
 
