@@ -20,7 +20,7 @@ PROGRAM DIFFUSION2D
 IMPLICIT NONE
 !
 integer IL,JL,ii,jj,kk,iter
-parameter (IL=3000,JL=4000)
+parameter (IL=120,JL=160)
 real dx,dy,xmax,ymax,x(IL),y(JL)
 real aw,ae,as,an,Su,Sp,ap
 real qw,k,area,Tn
@@ -37,15 +37,15 @@ iter  = 1
 !
 xmax = 0.3
 dx   = xmax/float(IL)
-do ii = 1,IL
-   x(ii) = (ii-0.5)*dx
-end do
+!~do ii = 1,IL
+!~   x(ii) = (ii-0.5)*dx
+!~end do
 !
 ymax = 0.4
 dy   = ymax/float(JL)
-do jj = 2,JL
-   y(jj) = (jj-0.5)*dy
-end do
+!~do jj = 2,JL
+!~   y(jj) = (jj-0.5)*dy
+!~end do
 !
 !...physical properties
 !   West heat flux [W/m^2], therm. conduct. [W/m.K], North fixed temp [*C]
@@ -61,7 +61,7 @@ T    = 0.
 !...Begin outer WHILE iterative loop 
 !
 !--------------------------------------------------------------------------!
-do while (resid >= .01)
+do while (resid >= .001)
    !   save previous temperature distribution to compare errors
    Tprev = T
    !-----------------------------------------------------------------------!
@@ -224,6 +224,7 @@ do while (resid >= .01)
    call thomas(JL,a,b,c,d,Tsol)
    !...Store N-S temperature solution
    T(:,IL) = Tsol
+   write(6,401)iter,resid
    !
    !...Recompute the error, increment the iteration
    !
