@@ -54,64 +54,131 @@ qw = 500000.
 k  = 1000.
 Tn = 100.
 area = 0.001
-!
-!...Set up system 
-!   SW Corner
-aw = 0.
-ae = k*area/dx
-as = 0.
-an = k*area/dx
-Sp = 0
-Su = area*qw
-ap = aw + ae + as + an - Sp
-!write(6,301)an,as,aw,ae,ap,Su
-!
-a(1) = -as
-b(1) =  ap
-c(1) = -an
-d(1) =  Su + ae*T(1,2)
-!
-do jj = 2,JL-1
+   !
+   !...West Cells
+   !
+   !...Set up system 
+   !   SW Corner
+   aw = 0.
+   ae = k*area/dx
+   as = 0.
+   an = k*area/dx
+   Sp = 0
+   Su = area*qw
+   ap = aw + ae + as + an - Sp
+   !write(6,301)an,as,aw,ae,ap,Su
+   !
+   a(1) = -as
+   b(1) =  ap
+   c(1) = -an
+   d(1) =  Su + ae*T(1,2)
+   !
+   do jj = 2,JL-1
+      aw = 0.
+      ae = k*area/dx
+      as = k*area/dx
+      an = k*area/dx
+      Sp = 0.
+      Su = area*qw
+      ap = aw + ae + as + an - Sp
+      !
+      !write(6,301)an,as,aw,ae,ap,Su
+      !
+      a(jj) = -as
+      b(jj) =  ap
+      c(jj) = -an
+      d(jj) =  Su + ae*T(jj,2)
+   end do
+   !...NW corner
    aw = 0.
    ae = k*area/dx
    as = k*area/dx
-   an = k*area/dx
-   Sp = 0.
-   Su = area*qw
+   an = 0.
+   Sp = -2.*k*area/dx
+   Su = area*qw + 2.*k*area*Tn/dx
    ap = aw + ae + as + an - Sp
-   !
+
    !write(6,301)an,as,aw,ae,ap,Su
    !
-   a(jj) = -as
-   b(jj) =  ap
-   c(jj) = -an
-   d(jj) =  Su + ae*T(jj,2)
-end do
-!...NW corner
-aw = 0.
-ae = k*area/dx
-as = k*area/dx
-an = 0.
-Sp = -2.*k*area/dx
-Su = area*qw + 2.*k*area*Tn/dx
-ap = aw + ae + as + an - Sp
-
-!write(6,301)an,as,aw,ae,ap,Su
-!
-a(JL) = -as
-b(JL) =  ap
-c(JL) = -an
-d(JL) =  Su + ae*T(JL,2)
-!
-!...solve system with the TDMA
-!
-call thomas(JL,a,b,c,d,Tsol)
-
-
-
-
+   a(JL) = -as
+   b(JL) =  ap
+   c(JL) = -an
+   d(JL) =  Su + ae*T(JL,2)
+   !
+   !...solve system with the TDMA
+   !
+   call thomas(JL,a,b,c,d,Tsol)
+   !...Store temperature solution
 T(:,1) = Tsol
-write(6,201)T
+
+
+do ii = 2,IL-1
+   !-----------------------------------------------------------------------!
+   !
+   !...Interior cells
+   !
+   !...Set up system 
+   !   South boundary
+   aw = k*area/dx
+   ae = k*area/dx
+   as = 0.
+   an = k*area/dx
+   Sp = 0
+   Su = 0
+   ap = aw + ae + as + an - Sp
+   !write(6,301)an,as,aw,ae,ap,Su
+   !
+   a(1) = -as
+   b(1) =  ap
+   c(1) = -an
+   d(1) =  Su + ae*T(1,ii+1) + aw*T(1,ii-1)
+   !
+   do jj = 2,JL-1
+      aw = k*area/dx
+      ae = k*area/dx
+      as = k*area/dx
+      an = k*area/dx
+      Sp = 0.
+      Su = 0.
+      ap = aw + ae + as + an - Sp
+      !
+      !write(6,301)an,as,aw,ae,ap,Su
+      !
+      a(jj) = -as
+      b(jj) =  ap
+      c(jj) = -an
+      d(jj) =  Su + ae*T(jj,ii+1) + aw*T(jj,ii-1)
+   end do
+   !...North boundary
+   aw = k*area/dx
+   ae = k*area/dx
+   as = k*area/dx
+   an = 0.
+   Sp = -2.*k*area/dx
+   Su =  2.*k*area*Tn/dx
+   ap = aw + ae + as + an - Sp
+   !write(6,301)an,as,aw,ae,ap,Su
+   !
+   a(JL) = -as
+   b(JL) =  ap
+   c(JL) = -an
+   d(JL) =  Su + ae*T(jj,ii+1) + aw*T(jj,ii-1)
+   !
+   !...solve system with the TDMA
+   !
+   call thomas(JL,a,b,c,d,Tsol)
+   !...Store temperature solution
+   T(:,ii) = Tsol
+
+end do
+
+   write(6,201)T
+   
+
+
+
+
+
 
 101 format(3x,f12.5,3x,f12.5)
 201 format(3x,f12.5)
