@@ -26,11 +26,12 @@ parameter (IL=3,JL=4)
 real dx,dy,xmax,ymax,x(IL),y(JL)
 real aw,ae,as,an,Su,Sp,ap
 real qw,k,area,Tn
-real a(JL
-real, dimension(JL,1) :: T
+real a(JL),b(JL),c(JL),d(JL)
+real, dimension(JL,2) :: T
 
 
 T = 0.
+write(6,201)T
 !
 !...set up the grid
 !
@@ -53,7 +54,7 @@ end do
 !...physical properties
 !
 qw = 500000.
-k = 1000.
+k  = 1000.
 Tn = 100.
 !
 !...Set up system 
@@ -66,43 +67,44 @@ Sp = 0
 Su = area*qw
 ap = aw + ae + as + an + Sp
 !
-a(1) =  0.
+a(1) = -as
 b(1) =  ap
 c(1) = -an
-d(1) =  Su + ae*T(2,1)
+d(1) =  Su + ae*T(1,2)
 !
 do jj = 2,JL-1
-   aw = 0
+   aw = 0.
    ae = k*area/dx
    as = k*area/dx
    an = k*area/dx
-   Sp = 0
+   Sp = 0.
    Su = area*qw
    ap = aw + ae + as + an + Sp
    !
-   a(1) = -as
-   b(1) =  ap
-   c(1) = -an
-   d(1) =  Su + ae*T(2,JL)
+   a(jj) = -as
+   b(jj) =  ap
+   c(jj) = -an
+   d(jj) =  Su + ae*T(jj,2)
 end do
 !...NW corner
 aw = 0.
 ae = k*area/dx
-as = 0.
-an = k*area/dx
-Sp = 0
-Su = area*qw
+as = k*area/dx
+an = 0.
+Sp = 0.
+Su = area*qw + 2.*k*area*Tn/dx
 ap = aw + ae + as + an + Sp
 !
-a(1) =  0.
-b(1) =  ap
-c(1) = -an
-d(1) =  Su + ae*T(2,1)
+a(JL) = -as
+b(JL) =  ap
+c(JL) = -an
+d(JL) =  Su + ae*T(JL,2)
 !
 
 
 
 101 format(3x,f12.5,3x,f12.5)
+201 format(3x,f12.5)
 
 !do kk = 1,IL 
 !   write(6,101)x(kk),y(kk)
