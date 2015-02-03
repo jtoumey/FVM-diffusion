@@ -27,11 +27,12 @@ real qw,k,area,Tn
 real a(JL),b(JL),c(JL),d(JL)
 real Tsol(JL),resid
 real, dimension(JL,IL) :: T,Tprev
+real t1,t2
 !
 !...Parameters for iteration
 !
 resid = 1000.
-iter  = 1
+iter  = 0.
 !
 !...set up the grid
 !
@@ -61,7 +62,8 @@ T    = 0.
 !...Begin outer WHILE iterative loop 
 !
 !--------------------------------------------------------------------------!
-do while (resid >= .001)
+call cpu_time(t1)
+do while (resid >= .05)
    !   save previous temperature distribution to compare errors
    Tprev = T
    !-----------------------------------------------------------------------!
@@ -224,13 +226,14 @@ do while (resid >= .001)
    call thomas(JL,a,b,c,d,Tsol)
    !...Store N-S temperature solution
    T(:,IL) = Tsol
-   write(6,401)iter,resid
    !
    !...Recompute the error, increment the iteration
    !
    resid = maxval(abs(T - Tprev))
-   iter = iter + 1
+   iter  = iter + 1
+   write(6,401)iter,resid
 end do
+call cpu_time(t2)
 !--------------------------------------------------------------------------!
 !
 !...Write the results to a file
@@ -240,7 +243,7 @@ open(unit=7,file='plate_temp.dat',ACTION="write", STATUS="replace")
 do jj = JL,1,-1
    write(7,'(1000f12.5)') (T(jj,ii),ii=1,IL)
 end do
-
+write(6,201)t2 - t1
 201 format(3x,f12.5)
-401 format(3x,'*** Iteration : ',i4,3x,'Residual :',f12.5,'  ***')
+401 format(3x,'*** Iteration : ',i8,3x,'Residual :',f12.5,'  ***')
 END
