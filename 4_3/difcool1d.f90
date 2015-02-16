@@ -18,7 +18,7 @@
 !*************************************************************************!
 PROGRAM DIFCOOL1D
 IMPLICIT NONE 
-
+!
 integer n,ii,jj
 parameter (n = 5)
 real n2,Ta,Tinf,T(n)
@@ -99,27 +99,5 @@ do jj = 1,n
    write(6,201)x(jj),T(jj)
    write(7,201)x(jj),T(jj)
 end do
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 END
