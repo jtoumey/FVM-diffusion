@@ -21,27 +21,22 @@
 !                  phi   Solution vector                                  !
 !                                                                         !
 !*************************************************************************!
-FUNCTION THOMAS(n,a,b,c,d,phi)
-!
-integer n,ii
-real a(n),b(n),c(n),d(n)
-real phi(n)
-real cp(n),dp(n),m
+SUBROUTINE THOMAS(n,a,b,c,d,phi)
+integer i,n
+real a(n),b(n),c(n),d(n),phi(n)
 !
 !...Forward sweep
-! initialize c-prime and d-prime
-cp(1) = c(1)/b(1)
-dp(1) = d(1)/b(1)
-! solve for vectors c-prime and d-prime
-do ii = 2,n
-   m = b(ii)-cp(ii-1)*a(ii)
-   cp(ii) = c(ii)/m
-   dp(ii) = (d(ii)-dp(ii-1)*a(ii))/m
-enddo
-! initialize x
-phi(n) = dp(n)
-! solve for x from the vectors c-prime and d-prime
-do ii = n-1,1,-1
-   phi(ii) = dp(ii)-cp(ii)*phi(ii+1)
+!
+do i = 2,n
+   b(i) = b(i) - (a(i)*c(i-1))/b(i-1) 
+   d(i) = d(i) - (a(i)*d(i-1))/b(i-1)
 end do
-END FUNCTION THOMAS
+!
+!...Back substitution
+!
+phi(n) = d(n)/b(n)
+!
+do i = n-1,1,-1
+   phi(i) = (d(i) - c(i)*phi(i+1))/b(i)
+end do
+end SUBROUTINE THOMAS
