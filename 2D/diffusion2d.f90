@@ -38,15 +38,15 @@ iter  = 0.
 !
 xmax = 0.3
 dx   = xmax/float(IL)
-!~do ii = 1,IL
-!~   x(ii) = (ii-0.5)*dx
-!~end do
+do ii = 1,IL
+   x(ii) = (ii-0.5)*dx
+end do
 !
 ymax = 0.4
 dy   = ymax/float(JL)
-!~do jj = 2,JL
-!~   y(jj) = (jj-0.5)*dy
-!~end do
+do jj = 2,JL
+   y(jj) = (jj-0.5)*dy
+end do
 !
 !...physical properties
 !   West heat flux [W/m^2], therm. conduct. [W/m.K], North fixed temp [*C]
