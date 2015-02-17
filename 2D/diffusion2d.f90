@@ -20,7 +20,7 @@ PROGRAM DIFFUSION2D
 IMPLICIT NONE
 !
 integer IL,JL,ii,jj,kk,iter
-parameter (IL=120,JL=160)
+parameter (IL=3,JL=4)
 real dx,dy,xmax,ymax,x(IL),y(JL)
 real aw,ae,as,an,Su,Sp,ap
 real qw,k,area,Tn
@@ -28,6 +28,7 @@ real a(JL),b(JL),c(JL),d(JL)
 real Tsol(JL),resid
 real, dimension(JL,IL) :: T,Tprev
 real t1,t2
+real Fr,Frtemp
 !
 !...Parameters for iteration
 !
@@ -63,7 +64,7 @@ T    = 0.
 !
 !--------------------------------------------------------------------------!
 call cpu_time(t1)
-do while (resid >= .0001)
+do while (resid >= .01)
    !   save previous temperature distribution to compare errors
    Tprev = T
    !************************************************************************
@@ -213,6 +214,8 @@ do while (resid >= .0001)
    c(1) = -an
    d(1) =  Su + aw*T(1,IL-1)
    !
+   resid = resid + abs(aw*T(1,IL-1) + an*T(2,IL) + Su - ap*T(JL,IL))
+   !
    do jj = 2,JL-1
       aw = k*area/dx
       ae = 0.
@@ -226,6 +229,8 @@ do while (resid >= .0001)
       b(jj) =  ap
       c(jj) = -an
       d(jj) =  Su + aw*T(jj,IL-1)
+      !
+      resid = resid + abs(aw*T(jj,IL-1) + an*T(jj+1,IL) + as*T(jj-1,IL) + Su - ap*T(jj,IL))
    end do
    !...NE corner
    aw =  k*area/dx
@@ -241,6 +246,8 @@ do while (resid >= .0001)
    c(JL) = -an
    d(JL) =  Su + aw*T(JL,IL-1)
    !
+   resid = resid + abs(aw*T(JL,IL-1) + as*T(JL-1,IL) + Su - ap*T(JL,IL))
+   !
    !...solve system with the TDMA
    !
    call thomas(JL,a,b,c,d,Tsol)
@@ -249,7 +256,17 @@ do while (resid >= .0001)
    !
    !...Recompute the error, increment the iteration
    !
-   resid = maxval(abs(T - Tprev))
+   if (iter < 5) then
+      Fr = 1.
+   else if (iter == 5) then
+      Fr = resid
+   else
+      Fr = Frtemp
+   end if
+   Frtemp = Fr
+   ! 
+   resid = resid/Fr
+   !
    iter  = iter + 1
    write(6,401)iter,resid
 end do
