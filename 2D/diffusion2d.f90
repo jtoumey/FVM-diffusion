@@ -63,9 +63,15 @@ T    = 0.
 !
 !--------------------------------------------------------------------------!
 call cpu_time(t1)
-do while (resid >= .05)
+do while (resid >= .0001)
    !   save previous temperature distribution to compare errors
    Tprev = T
+   !************************************************************************
+   !
+   !   Set the residual to zero to begin the summation. 
+   !
+   !************************************************************************
+   resid = 0.
    !-----------------------------------------------------------------------!
    !
    !...West Cells
@@ -85,6 +91,8 @@ do while (resid >= .05)
    b(1) =  ap
    c(1) = -an
    d(1) =  Su + ae*T(1,2)
+   !
+   resid = resid + abs(ae*T(1,2) + an*T(2,1) + Su - ap*T(1,1))
    !   West Interior cells
    do jj = 2,JL-1
       aw = 0.
@@ -99,6 +107,8 @@ do while (resid >= .05)
       b(jj) =  ap
       c(jj) = -an
       d(jj) =  Su + ae*T(jj,2)
+      !
+      resid = resid + abs(ae*T(jj,2) + an*T(jj+1,1) + as*T(jj-1,1) + Su - ap*T(jj,1))
    end do
    !   NW corner
    aw =  0.
@@ -114,11 +124,14 @@ do while (resid >= .05)
    c(JL) = -an
    d(JL) =  Su + ae*T(JL,2)
    !
+   resid = resid + abs(ae*T(JL,2) + as*T(JL-1,1) + Su - ap*T(JL,1))
+   !
    !...solve N-S system with the TDMA
    !
    call thomas(JL,a,b,c,d,Tsol)
    !...Store temperature solution
    T(:,1) = Tsol
+   !
    !-----------------------------------------------------------------------!
    !
    !...Interior Cells, marching W to E
