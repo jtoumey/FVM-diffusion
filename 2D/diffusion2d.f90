@@ -20,7 +20,7 @@ PROGRAM DIFFUSION2D
 IMPLICIT NONE
 !
 integer IL,JL,ii,jj,kk,iter
-parameter (IL=300,JL=400)
+parameter (IL=3,JL=4)
 real dx,dy,xmax,ymax,x(IL),y(JL)
 real aw,ae,as,an,Su,Sp,ap
 real qw,k,area,Tn
@@ -57,7 +57,7 @@ qw   = 500000.
 k    = 1000.
 Tn   = 100.
 area = 0.001
-T    = 50.
+T    = 0.
 !--------------------------------------------------------------------------!
 !
 !...Begin outer WHILE iterative loop 
@@ -94,6 +94,7 @@ do while (resid >= 1)
    d(1) =  Su + ae*T(1,2)
    !
    resid = resid + abs(ae*T(1,2) + an*T(2,1) + Su - ap*T(1,1))
+
    !   West Interior cells
    do jj = 2,JL-1
       aw = 0.
@@ -266,6 +267,7 @@ do while (resid >= 1)
    Frtemp = Fr
    ! 
    resid = resid/Fr
+   write(*,*)resid,Fr
    !
    iter  = iter + 1
    write(6,401)iter,resid
