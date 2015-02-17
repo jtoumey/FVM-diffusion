@@ -20,7 +20,7 @@ PROGRAM DIFFUSION2D
 IMPLICIT NONE
 !
 integer IL,JL,ii,jj,kk,iter
-parameter (IL=3,JL=4)
+parameter (IL=300,JL=400)
 real dx,dy,xmax,ymax,x(IL),y(JL)
 real aw,ae,as,an,Su,Sp,ap
 real qw,k,area,Tn
@@ -28,7 +28,10 @@ real a(JL),b(JL),c(JL),d(JL)
 real Tsol(JL),resid
 real, dimension(JL,IL) :: T,Tprev
 real t1,t2
-real Fr,Frtemp
+real Fr,Frtemp,Frp
+Fr = 0.
+Frtemp = 0.
+Frp = 0.
 !
 !...Parameters for iteration
 !
@@ -64,7 +67,7 @@ T    = 0.
 !
 !--------------------------------------------------------------------------!
 call cpu_time(t1)
-do while (resid >= 1)
+do while (resid >= .000001)
    !   save previous temperature distribution to compare errors
    Tprev = T
    !************************************************************************
@@ -94,7 +97,7 @@ do while (resid >= 1)
    d(1) =  Su + ae*T(1,2)
    !
    resid = resid + abs(ae*T(1,2) + an*T(2,1) + Su - ap*T(1,1))
-
+   Frp = Frp + abs(ap*T(1,1))
    !   West Interior cells
    do jj = 2,JL-1
       aw = 0.
@@ -111,6 +114,7 @@ do while (resid >= 1)
       d(jj) =  Su + ae*T(jj,2)
       !
       resid = resid + abs(ae*T(jj,2) + an*T(jj+1,1) + as*T(jj-1,1) + Su - ap*T(jj,1))
+      Frp = Frp + abs(ap*T(jj,1))
    end do
    !   NW corner
    aw =  0.
@@ -127,6 +131,7 @@ do while (resid >= 1)
    d(JL) =  Su + ae*T(JL,2)
    !
    resid = resid + abs(ae*T(JL,2) + as*T(JL-1,1) + Su - ap*T(JL,1))
+   Frp = Frp + abs(ap*T(JL,1))
    !
    !...solve N-S system with the TDMA
    !
@@ -155,6 +160,7 @@ do while (resid >= 1)
       d(1) =  Su + ae*T(1,ii+1) + aw*T(1,ii-1)
       !
       resid = resid + abs(aw*T(1,ii-1) + ae*T(1,ii+1) + an*T(2,ii) + Su - ap*T(1,ii))
+      Frp = Frp + abs(ap*T(1,ii))
       !
       do jj = 2,JL-1
          aw = k*area/dx
@@ -171,6 +177,7 @@ do while (resid >= 1)
          d(jj) =  Su + ae*T(jj,ii+1) + aw*T(jj,ii-1)
         !
         resid = resid + abs(aw*T(jj,ii-1) + ae*T(jj,ii+1) + an*T(jj+1,ii) + as*T(jj-1,ii) + Su - ap*T(jj,ii))
+        Frp = Frp + abs(ap*T(jj,ii))
         !
       end do
       !...North boundary
@@ -188,6 +195,7 @@ do while (resid >= 1)
       d(JL) =  Su + ae*T(jj,ii+1) + aw*T(jj,ii-1)
       !
       resid = resid + abs(aw*T(JL,ii-1) + ae*T(JL,ii+1) + as*T(JL-1,ii) + Su - ap*T(JL,ii))
+      Frp = Frp + abs(ap*T(JL,ii))
       !
       !...solve N-S system with the TDMA
       !
@@ -216,6 +224,7 @@ do while (resid >= 1)
    d(1) =  Su + aw*T(1,IL-1)
    !
    resid = resid + abs(aw*T(1,IL-1) + an*T(2,IL) + Su - ap*T(JL,IL))
+   Frp = Frp + abs(ap*T(JL,IL))
    !
    do jj = 2,JL-1
       aw = k*area/dx
@@ -232,6 +241,7 @@ do while (resid >= 1)
       d(jj) =  Su + aw*T(jj,IL-1)
       !
       resid = resid + abs(aw*T(jj,IL-1) + an*T(jj+1,IL) + as*T(jj-1,IL) + Su - ap*T(jj,IL))
+      Frp = Frp + abs(ap*T(jj,IL))
    end do
    !...NE corner
    aw =  k*area/dx
@@ -248,6 +258,7 @@ do while (resid >= 1)
    d(JL) =  Su + aw*T(JL,IL-1)
    !
    resid = resid + abs(aw*T(JL,IL-1) + as*T(JL-1,IL) + Su - ap*T(JL,IL))
+   Frp = Frp + abs(ap*T(JL,IL))
    !
    !...solve system with the TDMA
    !
@@ -257,17 +268,17 @@ do while (resid >= 1)
    !
    !...Recompute the error, increment the iteration
    !
-   if (iter < 5) then
+   if (iter < 2) then
       Fr = 1.
-   else if (iter == 5) then
-      Fr = resid
+   !~else if (iter == 2) then
+   !~   Fr = resid
+   !~   Frtemp = Fr
    else
-      Fr = Frtemp
+      Fr = Frp
+   !~   resid = resid/Fr
    end if
-   Frtemp = Fr
-   ! 
-   resid = resid/Fr
-   write(*,*)resid,Fr
+   !write(*,*)resid,Fr
+   resid = resid/Frp
    !
    iter  = iter + 1
    write(6,401)iter,resid
@@ -284,5 +295,5 @@ do jj = JL,1,-1
 end do
 write(6,201)t2 - t1
 201 format(3x,f12.5)
-401 format(3x,'*** Iteration : ',i8,3x,'Residual :',f12.5,'  ***')
+401 format(3x,'*** Iteration : ',i8,3x,'Residual :',f12.7,'  ***')
 END
