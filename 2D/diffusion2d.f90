@@ -152,6 +152,8 @@ do while (resid >= .0001)
       c(1) = -an
       d(1) =  Su + ae*T(1,ii+1) + aw*T(1,ii-1)
       !
+      resid = resid + abs(aw*T(1,ii-1) + ae*T(1,ii+1) + an*T(2,ii) + Su - ap*T(1,ii))
+      !
       do jj = 2,JL-1
          aw = k*area/dx
          ae = k*area/dx
@@ -165,6 +167,9 @@ do while (resid >= .0001)
          b(jj) =  ap
          c(jj) = -an
          d(jj) =  Su + ae*T(jj,ii+1) + aw*T(jj,ii-1)
+        !
+        resid = resid + abs(aw*T(jj,ii-1) + ae*T(jj,ii+1) + an*T(jj+1,ii) + as*T(jj-1,ii) + Su - ap*T(jj,ii))
+        !
       end do
       !...North boundary
       aw =  k*area/dx
@@ -179,6 +184,8 @@ do while (resid >= .0001)
       b(JL) =  ap
       c(JL) = -an
       d(JL) =  Su + ae*T(jj,ii+1) + aw*T(jj,ii-1)
+      !
+      resid = resid + abs(aw*T(JL,ii-1) + ae*T(JL,ii+1) + as*T(JL-1,ii) + Su - ap*T(JL,ii))
       !
       !...solve N-S system with the TDMA
       !
