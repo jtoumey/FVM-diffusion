@@ -20,7 +20,7 @@ PROGRAM DIFFUSION2D
 IMPLICIT NONE
 !
 integer IL,JL,ii,jj,kk,iter
-parameter (IL=300,JL=400)
+parameter (IL=3,JL=4)
 real dx,dy,xmax,ymax,x(IL),y(JL)
 real aw,ae,as,an,Su,Sp,ap
 real qw,k,area,Tn
@@ -67,7 +67,7 @@ T    = 0.
 !
 !--------------------------------------------------------------------------!
 call cpu_time(t1)
-do while (resid >= .000001)
+do while (resid >= 0.001)
    !   save previous temperature distribution to compare errors
    Tprev = T
    !************************************************************************
@@ -268,15 +268,6 @@ do while (resid >= .000001)
    !
    !...Recompute the error, increment the iteration
    !
-   if (iter < 2) then
-      Fr = 1.
-   !~else if (iter == 2) then
-   !~   Fr = resid
-   !~   Frtemp = Fr
-   else
-      Fr = Frp
-   !~   resid = resid/Fr
-   end if
    !write(*,*)resid,Fr
    resid = resid/Frp
    !
