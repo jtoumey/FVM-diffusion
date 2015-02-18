@@ -28,15 +28,14 @@ real a(JL),b(JL),c(JL),d(JL)
 real Tsol(JL),resid
 real, dimension(JL,IL) :: T,Tprev
 real t1,t2
-real Fr,Frtemp,Frp
-Fr = 0.
-Frtemp = 0.
-Frp = 0.
+real Frp
+
 !
 !...Parameters for iteration
 !
 resid = 1000.
 iter  = 0.
+Frp   = 0.
 !
 !...set up the grid
 !
@@ -268,7 +267,9 @@ do while (resid >= 0.0001)
    !
    !...Recompute the error, increment the iteration
    !
-   !write(*,*)resid,Fr
+   if (iter == 0) then
+      Frp = 1.
+   end if
    resid = resid/Frp
    !
    iter  = iter + 1
@@ -286,5 +287,5 @@ do jj = JL,1,-1
 end do
 write(6,201)t2 - t1
 201 format(3x,f12.5)
-401 format(3x,'*** Iteration : ',i8,3x,'Residual :',f12.7,'  ***')
+401 format(3x,'*** Iteration : ',i8,3x,'Residual :',f14.7,'  ***')
 END
