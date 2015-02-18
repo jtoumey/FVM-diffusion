@@ -20,7 +20,7 @@ PROGRAM DIFFUSION2D
 IMPLICIT NONE
 !
 integer IL,JL,ii,jj,kk,iter
-parameter (IL=300,JL=400)
+parameter (IL=3,JL=4)
 real dx,dy,xmax,ymax,x(IL),y(JL)
 real aw,ae,as,an,Su,Sp,ap
 real qw,k,area,Tn
@@ -40,13 +40,13 @@ iter  = 0.
 !
 !...set up the grid
 !
-xmax = 30.
+xmax = 0.3
 dx   = xmax/float(IL)
 do ii = 1,IL
    x(ii) = (ii-0.5)*dx
 end do
 !
-ymax = 40.
+ymax = 0.4
 dy   = ymax/float(JL)
 do jj = 2,JL
    y(jj) = (jj-0.5)*dy
