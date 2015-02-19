@@ -1,9 +1,13 @@
-set pm3d map
+set contour base
+set cntrparam level incremental 120, 10, 260
+unset surface
+set table 'cont.dat'
+splot 'plate_temp.dat'
+unset table 
 
-set isosamples <10>
-show isosamples
-
-#set cbrange [120:280]
-#set palette defined (0 "blue",17 "#00ffff",33 "white",50 "yellow",\
-    66 "red",100 "#990000",101 "grey")
-splot 'plate_temp.dat' matrix
+reset 
+set xrange [0:0.3]
+set yrange [0:0.4]
+unset key
+set palette rgbformulae 33,13,10
+p 'plate_temp.dat' with image, 'cont.dat' w l lt -1 lw 1.5

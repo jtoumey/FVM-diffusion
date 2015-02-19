@@ -20,7 +20,7 @@ PROGRAM DIFFUSION2D
 IMPLICIT NONE
 !
 integer IL,JL,ii,jj,kk,iter
-parameter (IL=3,JL=4)
+parameter (IL=300,JL=400)
 real dx,dy,xmax,ymax,x(IL),y(JL)
 real aw,ae,as,an,Su,Sp,ap
 real qw,k,area,Tn
@@ -47,7 +47,7 @@ end do
 !
 ymax = 0.4
 dy   = ymax/float(JL)
-do jj = 2,JL
+do jj = 1,JL
    y(jj) = (jj-0.5)*dy
 end do
 !
@@ -66,7 +66,7 @@ T    = 0.
 !
 !--------------------------------------------------------------------------!
 call cpu_time(t1)
-do while (resid >= 0.0001)
+do while (resid >= 0.000001)
    !   save previous temperature distribution to compare errors
    Tprev = T
    !************************************************************************
@@ -282,10 +282,13 @@ call cpu_time(t2)
 !
 !--------------------------------------------------------------------------!
 open(unit=7,file='plate_temp.dat',ACTION="write", STATUS="replace")
-do jj = JL,1,-1
-   write(7,'(1000f12.5)') (T(jj,ii),ii=1,IL)
+do ii = 1,IL
+   do jj = 1,JL
+      write(7,301)x(ii),y(jj),T(jj,ii)
+   end do
 end do
 write(6,201)t2 - t1
 201 format(3x,f12.5)
+301 format(3x,f12.5,3x,f12.5,3x,f12.5)
 401 format(3x,'*** Iteration : ',i8,3x,'Residual :',f14.7,'  ***')
 END
