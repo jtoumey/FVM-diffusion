@@ -29,7 +29,6 @@ real Tsol(JL),resid
 real, dimension(JL,IL) :: T,Tprev
 real t1,t2
 real Frp
-
 !
 !...Parameters for iteration
 !
